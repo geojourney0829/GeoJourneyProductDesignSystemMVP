@@ -13,21 +13,53 @@ const BADGES = [
 
 export default function Profile() {
   const { navigate } = useRouter()
-  const { profile, trips, dark, toggleDark } = useApp()
-  const personaLabels = profile.personas
+  const { profile, user, authStatus, trips, wishlist, dark, toggleDark, logout } = useApp()
+
+  const displayName = user?.name ?? profile.name
+  const personaIds = user?.personas ?? profile.personas
+  const personaLabels = personaIds
     .map((id) => PERSONAS.find((p) => p.id === id)?.label)
     .filter(Boolean)
 
+  if (authStatus === 'signed-out') {
+    return (
+      <div className="mx-auto flex min-h-[70vh] w-full max-w-lg flex-col items-center justify-center px-6 text-center">
+        <div className="mb-4 grid h-16 w-16 place-items-center rounded-[20px] bg-[var(--color-surface-2)] text-3xl">
+          👤
+        </div>
+        <h1 className="text-h2 text-[var(--color-ink)]">Sign in to GeoJourney</h1>
+        <p className="mt-2 text-[15px] text-[var(--color-ink-2)]">
+          Save places, track trips and contribute to the community.
+        </p>
+        <div className="mt-6 flex gap-3">
+          <Button variant="secondary" onClick={() => navigate('login')}>
+            Sign in
+          </Button>
+          <Button onClick={() => navigate('signup')}>Create account</Button>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="mx-auto w-full max-w-3xl px-4 pb-8 lg:px-8 lg:pt-6">
+      {/* Hero card */}
       <Card className="mb-5 p-5">
-        <div className="flex items-center gap-4">
-          <Avatar name={profile.name} size={64} />
+        <div className="flex items-start gap-4">
+          <Avatar name={displayName} size={64} />
           <div className="min-w-0 flex-1">
-            <h1 className="text-h2 text-[var(--color-ink)]">{profile.name}</h1>
-            <p className="text-[14px] text-[var(--color-muted)]">
-              Adventurer · GeoJourney member
-            </p>
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="text-h2 text-[var(--color-ink)]">{displayName}</h1>
+              {user?.verified && <Badge tone="cyan">✓ Verified</Badge>}
+              {authStatus === 'guest' && <Badge tone="neutral">Guest</Badge>}
+            </div>
+            {user?.bio ? (
+              <p className="mt-1 text-[14px] text-[var(--color-ink-2)]">{user.bio}</p>
+            ) : (
+              <p className="mt-1 text-[14px] text-[var(--color-muted)]">
+                Adventurer · GeoJourney member
+              </p>
+            )}
             <div className="mt-2 flex flex-wrap gap-1.5">
               {personaLabels.length ? (
                 personaLabels.map((l) => (
@@ -40,14 +72,22 @@ export default function Profile() {
               )}
             </div>
           </div>
+          {authStatus === 'authenticated' && (
+            <button
+              onClick={() => navigate('edit-profile')}
+              className="shrink-0 rounded-[10px] border border-[var(--color-line)] px-3 py-1.5 text-[13px] font-semibold text-[var(--color-ink-2)] hover:bg-[var(--color-surface-2)]"
+            >
+              Edit
+            </button>
+          )}
         </div>
 
         <div className="mt-5 grid grid-cols-4 gap-3 border-t border-[var(--color-line)] pt-4 text-center">
           {[
             { value: String(trips.length), label: 'Trips' },
-            { value: '1,127', label: 'km' },
-            { value: '34', label: 'Places' },
-            { value: '12', label: 'Contributions' },
+            { value: String(wishlist.length), label: 'Saved' },
+            { value: String(user?.contributions ?? 0), label: 'Contributed' },
+            { value: String(user?.helpfulVotes ?? 0), label: 'Helpful' },
           ].map((s) => (
             <div key={s.label}>
               <div className="text-h3 text-[var(--color-ink)]">{s.value}</div>
@@ -57,6 +97,7 @@ export default function Profile() {
         </div>
       </Card>
 
+      {/* Badges */}
       <Card className="mb-5 p-5">
         <h2 className="mb-3 text-h3 text-[var(--color-ink)]">Badges</h2>
         <div className="flex flex-wrap gap-3">
@@ -72,11 +113,13 @@ export default function Profile() {
         </div>
       </Card>
 
+      {/* Nav links */}
       <Card className="p-2">
         {[
           { label: 'My Trips', icon: '🧳', to: 'trips' as const },
           { label: 'Saved Places', icon: '🔖', to: 'saved' as const },
           { label: 'Expenses', icon: '💸', to: 'expenses' as const },
+          { label: 'Community Map', icon: '👥', to: 'community' as const },
           { label: 'Journal', icon: '📔', to: 'journal' as const },
           { label: 'Settings', icon: '⚙️', to: 'settings' as const },
         ].map((row) => (
@@ -107,9 +150,15 @@ export default function Profile() {
         </div>
       </Card>
 
-      <Button variant="ghost" block className="mt-4" onClick={() => navigate('splash')}>
-        Sign out (demo)
-      </Button>
+      {authStatus === 'authenticated' ? (
+        <Button variant="ghost" block className="mt-4" onClick={logout}>
+          Sign out
+        </Button>
+      ) : (
+        <Button variant="ghost" block className="mt-4" onClick={() => navigate('login')}>
+          Sign in
+        </Button>
+      )}
     </div>
   )
 }

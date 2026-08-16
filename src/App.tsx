@@ -18,16 +18,16 @@ import OfferDetail from './screens/compare/OfferDetail'
 import TripWorkspace from './screens/trip/TripWorkspace'
 import Trips from './screens/Trips'
 import Profile from './screens/Profile'
+import EditProfile from './screens/EditProfile'
 import Expenses from './screens/Expenses'
-import {
-  Community,
-  Journal,
-  Notifications,
-  Safety,
-  Saved,
-  Settings,
-  Weather,
-} from './screens/stubs/ComingSoon'
+import SavedPlaces from './screens/SavedPlaces'
+import CommunityMap from './screens/community/CommunityMap'
+import AddLocation from './screens/community/AddLocation'
+import PlaceDetail from './screens/community/PlaceDetail'
+import Login from './screens/auth/Login'
+import SignUp from './screens/auth/SignUp'
+import ForgotPassword from './screens/auth/ForgotPassword'
+import { Journal, Notifications, Safety, Settings, Weather } from './screens/stubs/ComingSoon'
 
 /** Screens that render full-bleed without the app shell (nav/sidebar). */
 const FULLSCREEN: RouteName[] = [
@@ -35,6 +35,9 @@ const FULLSCREEN: RouteName[] = [
   'onboarding-discover',
   'onboarding-persona',
   'onboarding-priorities',
+  'login',
+  'signup',
+  'forgot-password',
 ]
 
 const TITLES: Partial<Record<RouteName, string>> = {
@@ -57,6 +60,9 @@ const TITLES: Partial<Record<RouteName, string>> = {
   saved: 'Saved',
   settings: 'Settings',
   profile: 'Profile',
+  'edit-profile': 'Edit Profile',
+  'add-location': 'Add Place',
+  'place-detail': 'Place',
 }
 
 function Screen() {
@@ -70,6 +76,12 @@ function Screen() {
       return <Persona />
     case 'onboarding-priorities':
       return <Priorities />
+    case 'login':
+      return <Login />
+    case 'signup':
+      return <SignUp />
+    case 'forgot-password':
+      return <ForgotPassword />
     case 'home':
       return <Home />
     case 'explore':
@@ -92,10 +104,18 @@ function Screen() {
       return <Trips />
     case 'profile':
       return <Profile />
+    case 'edit-profile':
+      return <EditProfile />
     case 'expenses':
       return <Expenses />
+    case 'saved':
+      return <SavedPlaces />
     case 'community':
-      return <Community />
+      return <CommunityMap />
+    case 'add-location':
+      return <AddLocation />
+    case 'place-detail':
+      return <PlaceDetail />
     case 'journal':
       return <Journal />
     case 'safety':
@@ -104,8 +124,6 @@ function Screen() {
       return <Weather />
     case 'notifications':
       return <Notifications />
-    case 'saved':
-      return <Saved />
     case 'settings':
       return <Settings />
     default:

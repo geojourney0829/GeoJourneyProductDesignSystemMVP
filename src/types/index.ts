@@ -237,6 +237,66 @@ export interface TravelProfile {
   name: string
 }
 
+/* ---------- Auth / User (M2) ---------- */
+
+export interface User {
+  id: string
+  name: string
+  email: string
+  bio: string
+  personas: PersonaId[]
+  priorities: PriorityId[]
+  guest: boolean
+  contributions: number
+  helpfulVotes: number
+  verified: boolean
+}
+
+export type AuthStatus = 'signed-out' | 'guest' | 'authenticated'
+
+/* ---------- Community & content (M2) ---------- */
+
+export type CommunityCategory =
+  | 'food'
+  | 'scenic'
+  | 'hidden-gem'
+  | 'hotel'
+  | 'fuel'
+  | 'attraction'
+  | 'safety'
+
+export interface CommunityLocation extends Place {
+  communityCategory: CommunityCategory
+  contributor: string
+  contributorVerified: boolean
+  helpfulVotes: number
+  updatedAt: string
+  status: 'published' | 'draft'
+  photos: string[]
+}
+
+export interface Review {
+  id: string
+  targetId: string
+  author: string
+  authorVerified: boolean
+  rating: number
+  text: string
+  date: string
+  helpful: number
+  photos: string[]
+}
+
+export interface Comment {
+  id: string
+  targetId: string
+  author: string
+  text: string
+  date: string
+}
+
+export type MediaUploadState = 'idle' | 'uploading' | 'success' | 'error'
+
 /* ---------- Weather (structured mock) ---------- */
 
 export interface WeatherPoint {
